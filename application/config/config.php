@@ -1,0 +1,109 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+$config['base_url']             = 'https://task.techfod.com/'; // <-- CHANGE THIS
+$config['index_page']           = '';
+$config['uri_protocol']         = 'AUTO';
+$config['url_suffix']           = '';
+$config['language']             = 'english';
+$config['charset']              = 'UTF-8';
+$config['enable_hooks']         = FALSE;
+$config['subclass_prefix']      = 'MY_';
+$config['composer_autoload']    = FALSE;
+$config['permitted_uri_chars']  = 'a-z 0-9~%.:_\-';
+$config['allow_get_array']      = TRUE;
+$config['enable_query_strings'] = FALSE;
+$config['controller_trigger']   = 'c';
+$config['function_trigger']     = 'm';
+$config['directory_trigger']    = 'd';
+$config['error_prefix']         = '<div class="alert alert-danger">';
+$config['error_suffix']         = '</div>';
+$config['log_threshold']        = 0;
+$config['log_path']             = '';
+$config['log_file_extension']   = '';
+$config['log_file_permissions'] = 0644;
+$config['log_date_format']      = 'Y-m-d H:i:s';
+$config['cache_path']           = '';
+$config['cache_query_string']   = FALSE;
+$config['encryption_key']       = 'Techfod@2024#SecretKey!XYZ';
+
+// SESSION - file based, no database table needed
+$config['sess_driver']             = 'files';
+$config['sess_cookie_name']        = 'techfod_session';
+$config['sess_expiration']         = 7200;
+$config['sess_save_path']          = APPPATH . 'cache/sessions/';
+$config['sess_match_ip']           = FALSE;
+$config['sess_time_to_update']     = 300;
+$config['sess_regenerate_destroy'] = FALSE;
+
+$config['cookie_prefix']   = '';
+$config['cookie_domain']   = '';
+$config['cookie_path']     = '/';
+$config['cookie_secure']   = FALSE;
+$config['cookie_httponly'] = FALSE;
+
+$config['standardize_newlines']  = FALSE;
+$config['global_xss_filtering']  = FALSE;
+
+// CSRF
+$config['csrf_protection']  = TRUE;
+$config['csrf_token_name']  = 'csrf_token';
+$config['csrf_cookie_name'] = 'csrf_cookie';
+$config['csrf_expire']      = 7200;
+$config['csrf_regenerate']  = TRUE;
+$config['csrf_exclude_uris'] = array(
+    'tasks/update_status',
+    'issues/update_status',
+    'tasks/add_comment',
+    'issues/add_comment',
+    'tickets/add_comment',
+    'tickets/update_status',
+    'attendance/clock_in',
+    'attendance/clock_out',
+    'attendance/save_worksheet',
+    'attendance/leave_request',
+    'attendance/leave_approve',
+    'attendance/leave_reject',
+    'attendance/leave_cancel',
+    'attendance/get_status',
+    'worksheet/save',
+    'hr/reset_password',
+    'hr/toggle_status',
+    'hr/send_notification',
+    'discussions/post',
+    'discussions/delete',
+    'discussions/get_new',
+    'chat/send',
+    'chat/heartbeat',
+    'chat/direct',
+    'chat/messages',
+    'chat/poll',
+    'chat/create_group',
+    'chat/user_list',
+    'chat/session',
+    'chat/day_session',
+    'chat/poll',
+    'clients/add_user',
+    'clients/remove_user',
+    'clients/reset_password',
+    'clients/save_user_projects',
+    'clients/user_projects',
+    'client-portal/add_user',
+    'client-portal/remove_user',
+    'client-portal/reset_password',
+    'client-portal/save_user_projects',
+    'client-portal/user_projects',
+);
+
+$config['compress_output']    = FALSE;
+$config['time_reference']     = 'local';
+$config['rewrite_short_tags'] = FALSE;
+$config['proxy_ips']          = '';
+
+// App specific
+$config['app_name']            = 'Techfod Task System';
+$config['app_version']         = '1.0.0';
+$config['upload_path']         = FCPATH . 'uploads/';
+$config['max_upload_size']     = 10240;
+$config['allowed_extensions']  = 'jpg|jpeg|png|gif|pdf|doc|docx|xls|xlsx|zip|txt';
+$config['pagination_limit']    = 15;
