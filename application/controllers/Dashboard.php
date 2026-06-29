@@ -27,11 +27,14 @@ class Dashboard extends MY_Controller {
 
         } elseif ($role === 'client') {
             $client_id = $this->current_user->client_id;
-            $is_admin  = $this->_client_is_admin();
-            $data['projects']       = $this->Project_model->get_for_client_user($client_id, $this->current_user->id, $is_admin);
-            $data['my_tickets']     = $this->Ticket_model->get_for_client_user($client_id, $this->current_user->id, $is_admin, 5);
+            $is_admin  = $this->User_model->is_portal_admin($uid);
+            $data['is_client_admin'] = $is_admin;
+            $data['projects']       = $this->Project_model->get_for_client_user($client_id, $uid, $is_admin);
+            $data['my_tickets']     = $this->Ticket_model->get_for_client_user($client_id, $uid, $is_admin, 5);
             $data['open_tickets']   = $this->Ticket_model->count_by_client($client_id, 'open');
             $data['total_projects'] = count($data['projects']);
+            $data['team_users']     = [];
+            $data['user_projects']  = [];
             if ($is_admin) {
                 $data['team_users']    = $this->Client_model->get_users($client_id);
                 $data['all_projects']  = $this->Project_model->get_by_client($client_id);

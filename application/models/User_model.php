@@ -55,6 +55,52 @@ class User_model extends CI_Model {
             ->order_by('u.first_name')->get()->result();
     }
 
+    /**
+     * Whether a client portal user can manage sub-users and project assignments.
+     */
+    public function is_portal_admin($user_id) {
+        $user = $this->get_user((int)$user_id);
+        if (!$user || $user->role_slug !== 'client' || !$user->client_id) {
+            return false;
+        }
+
+        if (!$this->db->field_exists('is_client_admin', 'users')) {
+            return true;
+        }
+
+        if (!empty($user->is_client_admin)) {
+            return true;
+        }
+
+        $client = $this->db->select('email')->get_where('clients', ['id' => (int)$user->client_id])->row();
+        if ($client && strcasecmp(trim($client->email), trim($user->email)) === 0) {
+            return true;
+        }
+
+        $has_admin = $this->db->select('u.id')
+            ->from('users u')
+            ->join('roles r', 'r.id = u.role_id')
+            ->where('u.client_id', (int)$user->client_id)
+            ->where('r.slug', 'client')
+            ->where('u.is_client_admin', 1)
+            ->limit(1)
+            ->get()->row();
+
+        if (!$has_admin) {
+            $first = $this->db->select('u.id')
+                ->from('users u')
+                ->join('roles r', 'r.id = u.role_id')
+                ->where('u.client_id', (int)$user->client_id)
+                ->where('r.slug', 'client')
+                ->order_by('u.id', 'ASC')
+                ->limit(1)
+                ->get()->row();
+            return $first && (int)$first->id === (int)$user->id;
+        }
+
+        return false;
+    }
+
     public function email_exists($email, $exclude_id = null) {
         $this->db->where('email', $email);
         if ($exclude_id) $this->db->where('id !=', $exclude_id);

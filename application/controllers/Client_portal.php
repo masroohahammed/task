@@ -143,7 +143,7 @@ class Client_portal extends MY_Controller {
     }
 
     private function _require_client_admin() {
-        if (!has_role('client') || !is_client_admin()) {
+        if (!has_role('client') || !$this->User_model->is_portal_admin($this->current_user->id)) {
             $this->session->set_flashdata('error', 'You do not have permission to manage team members.');
             redirect('dashboard');
         }

@@ -46,6 +46,15 @@ class MY_Controller extends CI_Controller {
         $this->data['current_user']          = $this->current_user;
         $this->data['unread_notifications']  = $this->Notification_model->get_unread_count($user_id);
         $this->data['notifications']         = $this->Notification_model->get_latest($user_id, 5);
+        $this->data['is_client_admin']       = (
+            $this->current_user
+            && $this->current_user->role_slug === 'client'
+            && $this->User_model->is_portal_admin($user_id)
+        );
+
+        if ($this->current_user && $this->current_user->role_slug === 'client') {
+            $this->session->set_userdata('is_client_admin', $this->data['is_client_admin'] ? 1 : 0);
+        }
 
         // Safe loads — tables may not exist if SQL upgrade not run yet
         try { $this->data['chat_unread'] = $this->Chat_model->get_unread_count($user_id); }
@@ -89,7 +98,7 @@ class MY_Controller extends CI_Controller {
 
     /** Whether the logged-in client user is the company admin. */
     protected function _client_is_admin() {
-        return has_role('client') && is_client_admin();
+        return has_role('client') && $this->User_model->is_portal_admin($this->current_user->id);
     }
 
     /** Projects visible to the current client portal user. */

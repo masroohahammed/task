@@ -65,10 +65,10 @@
       <?php endif; ?>
     </a>
 
-    <?php if (is_client_admin()): ?>
+    <?php if (!empty($is_client_admin)): ?>
     <a href="<?= site_url('client-portal/users') ?>"
        class="sb-link<?= strpos(uri_string(),'client-portal')!==false ? ' active' : '' ?>"
-       title="Users & Projects">
+       title="Add Users &amp; Assign Projects">
       <i class="bi bi-person-plus"></i>
     </a>
     <?php endif; ?>
@@ -164,6 +164,12 @@
            class="tb-tab<?= uri_string()==='dashboard' ? ' tb-tab-active' : '' ?>">
           <i class="bi bi-grid-1x2-fill"></i> Dashboard
         </a>
+        <?php if (has_role('client') && !empty($is_client_admin)): ?>
+        <a href="<?= site_url('client-portal/users') ?>"
+           class="tb-tab<?= strpos(uri_string(),'client-portal')!==false ? ' tb-tab-active' : '' ?>">
+          <i class="bi bi-person-plus"></i> Users &amp; Projects
+        </a>
+        <?php else: ?>
         <a href="<?= site_url('projects') ?>"
            class="tb-tab<?= strpos(uri_string(),'projects')!==false ? ' tb-tab-active' : '' ?>">
           <i class="bi bi-diagram-3"></i> Workflows
@@ -172,6 +178,7 @@
            class="tb-tab<?= strpos(uri_string(),'reports')!==false ? ' tb-tab-active' : '' ?>">
           <i class="bi bi-share"></i> Integrations
         </a>
+        <?php endif; ?>
       </nav>
     </div>
 

@@ -4,7 +4,7 @@
     <p class="page-subtitle">Welcome back! Track your projects and support requests.</p>
   </div>
   <div class="page-actions">
-    <?php if (is_client_admin()): ?>
+    <?php if (!empty($is_client_admin)): ?>
     <a href="<?= site_url('client-portal/users') ?>" class="btn btn-primary">
       <i class="bi bi-person-plus me-1"></i> Add Users &amp; Assign Projects
     </a>
@@ -39,22 +39,29 @@
   </div>
 </div>
 
-<?php if (!empty($team_users) && is_client_admin()): ?>
+<?php if (!empty($is_client_admin)): ?>
 <div class="row g-4 mt-1">
   <div class="col-12">
     <div class="card card-modern">
       <div class="card-header-modern">
         <h6 class="card-title-modern"><i class="bi bi-people me-2 text-primary"></i>Team &amp; Project Access</h6>
         <a href="<?= site_url('client-portal/users') ?>" class="btn btn-sm btn-primary">
-          <i class="bi bi-person-plus me-1"></i> Manage Users
+          <i class="bi bi-person-plus me-1"></i> Add Users &amp; Assign Projects
         </a>
       </div>
       <div class="card-body p-0">
-        <?php if (count($team_users) <= 1): ?>
+        <?php
+          $sub_users = array_filter($team_users ?? [], function($u) {
+            return empty($u->is_client_admin);
+          });
+        ?>
+        <?php if (empty($sub_users)): ?>
         <div class="empty-state py-4">
           <i class="bi bi-person-plus"></i>
-          <p class="mb-2">Add sub-users and assign them to specific projects.</p>
-          <a href="<?= site_url('client-portal/users') ?>" class="btn btn-primary btn-sm">Add User</a>
+          <p class="mb-2">Add sub-users and assign them to one or more projects.</p>
+          <a href="<?= site_url('client-portal/users') ?>" class="btn btn-primary btn-sm">
+            <i class="bi bi-person-plus me-1"></i> Add Users &amp; Assign Projects
+          </a>
         </div>
         <?php else: ?>
         <div class="table-responsive">
@@ -63,8 +70,7 @@
               <th>User</th><th>Projects</th><th></th>
             </tr></thead>
             <tbody>
-            <?php foreach ($team_users as $tu):
-              if (!empty($tu->is_client_admin)) continue;
+            <?php foreach ($sub_users as $tu):
               $assignments = $user_projects[$tu->id] ?? [];
             ?>
             <tr>

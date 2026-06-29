@@ -53,10 +53,7 @@ class Auth extends CI_Controller {
                         'logged_in'   => TRUE,
                     ];
                     if ($user->role_slug === 'client') {
-                        $session_data['is_client_admin'] = (
-                            !$this->db->field_exists('is_client_admin', 'users')
-                            || !empty($user->is_client_admin)
-                        );
+                        $session_data['is_client_admin'] = $this->User_model->is_portal_admin($user->id) ? 1 : 0;
                     }
                     $this->session->set_userdata($session_data);
 
