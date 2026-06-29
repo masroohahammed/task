@@ -15,10 +15,11 @@ class Client_portal extends MY_Controller {
 
     public function users() {
         $client_id = (int)$this->current_user->client_id;
-        $data['users']      = $this->Client_model->get_users($client_id);
-        $data['projects']   = $this->Project_model->get_by_client($client_id);
-        $data['page_title'] = 'Team Members';
-        $data['page_scripts'] = $this->load->view('client_portal/users_scripts', $data, TRUE);
+        $data['users']           = $this->Client_model->get_users($client_id);
+        $data['projects']        = $this->Project_model->get_by_client($client_id);
+        $data['user_projects']   = $this->Client_user_project_model->get_grouped_for_client($client_id);
+        $data['page_title']      = 'Team & Project Access';
+        $data['page_scripts']    = $this->load->view('client_portal/users_scripts', $data, TRUE);
         $this->render('client_portal/users', $data);
     }
 

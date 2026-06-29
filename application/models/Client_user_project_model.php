@@ -76,6 +76,30 @@ class Client_user_project_model extends CI_Model {
         $this->db->where('user_id', (int)$user_id)->delete('client_user_projects');
     }
 
+    /** All project assignments for a client company, grouped by user_id. */
+    public function get_grouped_for_client($client_id) {
+        if (!$this->table_exists()) {
+            return [];
+        }
+        $rows = $this->db->select('cup.user_id, cup.project_id, cup.permission, p.name as project_name')
+            ->from('client_user_projects cup')
+            ->join('projects p', 'p.id = cup.project_id')
+            ->join('users u', 'u.id = cup.user_id')
+            ->where('u.client_id', (int)$client_id)
+            ->order_by('p.name', 'ASC')
+            ->get()->result();
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $uid = (int)$row->user_id;
+            if (!isset($grouped[$uid])) {
+                $grouped[$uid] = [];
+            }
+            $grouped[$uid][] = $row;
+        }
+        return $grouped;
+    }
+
     private function _permission_level($permission) {
         $map = ['view' => 1, 'tickets' => 2, 'manage' => 3];
         return $map[$permission] ?? 0;

@@ -40,7 +40,7 @@ class Auth extends CI_Controller {
                 if ($user) {
                     $permissions = $this->User_model->get_user_permissions($user->id);
 
-                    $this->session->set_userdata([
+                    $session_data = [
                         'user_id'     => $user->id,
                         'user_name'   => $user->first_name . ' ' . $user->last_name,
                         'user_email'  => $user->email,
@@ -51,7 +51,14 @@ class Auth extends CI_Controller {
                         'client_id'   => $user->client_id,
                         'permissions' => $permissions,
                         'logged_in'   => TRUE,
-                    ]);
+                    ];
+                    if ($user->role_slug === 'client') {
+                        $session_data['is_client_admin'] = (
+                            !$this->db->field_exists('is_client_admin', 'users')
+                            || !empty($user->is_client_admin)
+                        );
+                    }
+                    $this->session->set_userdata($session_data);
 
                     // Update last login
                     $this->User_model->update_last_login($user->id);

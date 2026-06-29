@@ -32,6 +32,12 @@ class Dashboard extends MY_Controller {
             $data['my_tickets']     = $this->Ticket_model->get_for_client_user($client_id, $this->current_user->id, $is_admin, 5);
             $data['open_tickets']   = $this->Ticket_model->count_by_client($client_id, 'open');
             $data['total_projects'] = count($data['projects']);
+            if ($is_admin) {
+                $data['team_users']    = $this->Client_model->get_users($client_id);
+                $data['all_projects']  = $this->Project_model->get_by_client($client_id);
+                $this->load->model('Client_user_project_model');
+                $data['user_projects'] = $this->Client_user_project_model->get_grouped_for_client($client_id);
+            }
             $data['page_title']     = 'Client Dashboard';
             $this->render('dashboard/client', $data);
 

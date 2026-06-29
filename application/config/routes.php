@@ -101,7 +101,8 @@ $route['clients/save_user_projects/(:num)'] = 'clients/save_user_projects/$1';
 $route['clients/user_projects/(:num)']  = 'clients/user_projects/$1';
 
 // Client portal (sub-user management by client admins)
-$route['client-portal/users']                    = 'client_portal/users';
+$route['client-portal']                        = 'client_portal/users';
+$route['client-portal/users']                  = 'client_portal/users';
 $route['client-portal/add_user']                 = 'client_portal/add_user';
 $route['client-portal/remove_user/(:num)']       = 'client_portal/remove_user/$1';
 $route['client-portal/reset_password/(:num)']  = 'client_portal/reset_password/$1';

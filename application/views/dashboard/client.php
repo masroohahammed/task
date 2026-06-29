@@ -4,14 +4,14 @@
     <p class="page-subtitle">Welcome back! Track your projects and support requests.</p>
   </div>
   <div class="page-actions">
-    <a href="<?= site_url('tickets/create') ?>" class="btn btn-primary">
-      <i class="bi bi-plus-lg me-1"></i> New Support Ticket
-    </a>
     <?php if (is_client_admin()): ?>
-    <a href="<?= site_url('client-portal/users') ?>" class="btn btn-ghost">
-      <i class="bi bi-people me-1"></i> Team Members
+    <a href="<?= site_url('client-portal/users') ?>" class="btn btn-primary">
+      <i class="bi bi-person-plus me-1"></i> Add Users &amp; Assign Projects
     </a>
     <?php endif; ?>
+    <a href="<?= site_url('tickets/create') ?>" class="btn btn-ghost">
+      <i class="bi bi-plus-lg me-1"></i> New Ticket
+    </a>
   </div>
 </div>
 
@@ -38,6 +38,65 @@
     </div>
   </div>
 </div>
+
+<?php if (!empty($team_users) && is_client_admin()): ?>
+<div class="row g-4 mt-1">
+  <div class="col-12">
+    <div class="card card-modern">
+      <div class="card-header-modern">
+        <h6 class="card-title-modern"><i class="bi bi-people me-2 text-primary"></i>Team &amp; Project Access</h6>
+        <a href="<?= site_url('client-portal/users') ?>" class="btn btn-sm btn-primary">
+          <i class="bi bi-person-plus me-1"></i> Manage Users
+        </a>
+      </div>
+      <div class="card-body p-0">
+        <?php if (count($team_users) <= 1): ?>
+        <div class="empty-state py-4">
+          <i class="bi bi-person-plus"></i>
+          <p class="mb-2">Add sub-users and assign them to specific projects.</p>
+          <a href="<?= site_url('client-portal/users') ?>" class="btn btn-primary btn-sm">Add User</a>
+        </div>
+        <?php else: ?>
+        <div class="table-responsive">
+          <table class="table table-modern table-hover mb-0">
+            <thead><tr>
+              <th>User</th><th>Projects</th><th></th>
+            </tr></thead>
+            <tbody>
+            <?php foreach ($team_users as $tu):
+              if (!empty($tu->is_client_admin)) continue;
+              $assignments = $user_projects[$tu->id] ?? [];
+            ?>
+            <tr>
+              <td>
+                <div class="fw-600 small"><?= html_escape($tu->first_name.' '.$tu->last_name) ?></div>
+                <div class="small text-muted"><?= html_escape($tu->email) ?></div>
+              </td>
+              <td>
+                <?php if (empty($assignments)): ?>
+                <span class="small text-muted">No projects</span>
+                <?php else: ?>
+                <div class="d-flex flex-wrap gap-1">
+                  <?php foreach ($assignments as $a): ?>
+                  <span class="badge bg-secondary-soft text-muted"><?= html_escape($a->project_name) ?></span>
+                  <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+              </td>
+              <td class="text-end">
+                <a href="<?= site_url('client-portal/users') ?>" class="btn btn-sm btn-ghost">Edit</a>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 
 <div class="row g-4 mt-1">
   <div class="col-xl-7">

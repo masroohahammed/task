@@ -9,6 +9,10 @@ function is_client_admin() {
     if (!has_role('client')) {
         return false;
     }
+    $session_flag = $CI->session->userdata('is_client_admin');
+    if ($session_flag !== null && $session_flag !== '') {
+        return (bool)$session_flag;
+    }
     if (!$CI->db->field_exists('is_client_admin', 'users')) {
         return true;
     }

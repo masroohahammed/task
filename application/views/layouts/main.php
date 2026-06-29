@@ -68,8 +68,8 @@
     <?php if (is_client_admin()): ?>
     <a href="<?= site_url('client-portal/users') ?>"
        class="sb-link<?= strpos(uri_string(),'client-portal')!==false ? ' active' : '' ?>"
-       title="Team Members">
-      <i class="bi bi-people"></i>
+       title="Users & Projects">
+      <i class="bi bi-person-plus"></i>
     </a>
     <?php endif; ?>
 
