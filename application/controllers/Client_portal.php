@@ -18,6 +18,7 @@ class Client_portal extends MY_Controller {
         $data['users']      = $this->Client_model->get_users($client_id);
         $data['projects']   = $this->Project_model->get_by_client($client_id);
         $data['page_title'] = 'Team Members';
+        $data['page_scripts'] = $this->load->view('client_portal/users_scripts', $data, TRUE);
         $this->render('client_portal/users', $data);
     }
 

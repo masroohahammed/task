@@ -350,6 +350,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<?php if (!empty($page_scripts)): ?>
+<?= $page_scripts ?>
+<?php endif; ?>
 <script src="<?= base_url('assets/js/app.js') ?>"></script>
 <script src="<?= base_url('assets/js/clock.js') ?>"></script>
 <?php $this->load->view('layouts/chat_widget'); ?>

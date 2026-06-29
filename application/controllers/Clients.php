@@ -88,6 +88,7 @@ class Clients extends MY_Controller {
         $data['tickets']    = $this->Ticket_model->get_by_client($id);
         $data['users']      = $this->Client_model->get_users($id);
         $data['page_title'] = html_escape($client->company_name);
+        $data['page_scripts'] = $this->load->view('clients/view_scripts', $data, TRUE);
         $this->render('clients/view', $data);
     }
 
