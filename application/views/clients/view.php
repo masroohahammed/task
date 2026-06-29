@@ -338,6 +338,14 @@
 <script>
 var BASE_URL = '<?= base_url() ?>';
 var CLIENT_ID = <?= $client->id ?>;
+var CSRF = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+var CSRF_NAME = (document.querySelector('meta[name="csrf-param"]') || {}).content || 'csrf_token';
+
+function withCsrf(data) {
+  var payload = data || {};
+  payload[CSRF_NAME] = CSRF;
+  return payload;
+}
 
 function collectProjectPerms(selector) {
   var projects = {};
@@ -355,13 +363,13 @@ $('#saveNewUser').click(function() {
     url: BASE_URL + 'clients/add_user/' + CLIENT_ID,
     method: 'POST',
     dataType: 'json',
-    data: {
+    data: withCsrf({
       first_name: $('#newUserFirst').val(),
       last_name:  $('#newUserLast').val(),
       email:      $('#newUserEmail').val(),
       job_title:  $('#newUserTitle').val(),
       password:   $('#newUserPass').val()
-    },
+    }),
     success: function(res) {
       $btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Add User');
       if (res.success) {
@@ -380,9 +388,11 @@ $('#saveNewUser').click(function() {
 
 function removeUser(uid, btn) {
   if (!confirm('Remove this portal user? They will no longer be able to log in.')) return;
-  $.post(BASE_URL + 'clients/remove_user/' + uid, {}, function(res) {
+  $.post(BASE_URL + 'clients/remove_user/' + uid, withCsrf({}), function(res) {
     if (res.success) $(btn).closest('tr').fadeOut(300, function(){ $(this).remove(); });
-  }, 'json');
+  }, 'json').fail(function() {
+    alert('Could not remove user. Please refresh the page and try again.');
+  });
 }
 
 function resetPassword(uid) {
@@ -395,14 +405,21 @@ function resetPassword(uid) {
 $('#doResetPass').click(function() {
   var uid  = $('#resetUserId').val();
   var pass = $('#newPassInput').val();
-  $.post(BASE_URL + 'clients/reset_password/' + uid, { password: pass }, function(res) {
+  var $btn = $(this).prop('disabled', true);
+  $.post(BASE_URL + 'clients/reset_password/' + uid, withCsrf({ password: pass }), function(res) {
+    $btn.prop('disabled', false);
     if (res.success) {
       $('#resetPassMsg').removeClass('d-none alert-danger').addClass('alert alert-success').text(res.message);
       setTimeout(function(){ $('#resetPassModal').modal('hide'); }, 1500);
     } else {
-      $('#resetPassMsg').removeClass('d-none alert-success').addClass('alert alert-danger').text(res.message);
+      $('#resetPassMsg').removeClass('d-none alert-success').addClass('alert alert-danger').text(res.message || 'Could not reset password.');
     }
-  }, 'json');
+  }, 'json').fail(function(xhr) {
+    $btn.prop('disabled', false);
+    var msg = 'Could not reset password. Please refresh the page and try again.';
+    if (xhr.status === 403) msg = 'Session expired. Please refresh the page and try again.';
+    $('#resetPassMsg').removeClass('d-none alert-success').addClass('alert alert-danger').text(msg);
+  });
 });
 
 function openProjects(uid, name) {
@@ -422,9 +439,9 @@ function openProjects(uid, name) {
 
 $('#saveProjects').click(function() {
   var uid = $('#projUserId').val();
-  $.post(BASE_URL + 'clients/save_user_projects/' + uid, {
+  $.post(BASE_URL + 'clients/save_user_projects/' + uid, withCsrf({
     projects: collectProjectPerms('.edit-proj-perm')
-  }, function(res) {
+  }), function(res) {
     if (res.success) {
       $('#projMsg').removeClass('d-none alert-danger').addClass('alert alert-success').text(res.message);
       setTimeout(function(){ $('#projectsModal').modal('hide'); }, 1200);
